@@ -19,7 +19,7 @@ data = pd.read_csv('samplepython.csv')
 st.title('Marketing Data Analysis')
 
 # Sidebar - Dropdown to select metric (impressions or clicks)
-selected_metric = st.sidebar.selectbox('Select Metric:', ('Impressions', 'Clicks'))
+selected_metric = st.sidebar.selectbox('Select Metric:', ('Impressions', 'Clicks','Conversions'))
 
 # Group by category and calculate the total metric value
 category_metrics = data.groupby('Category')[selected_metric].sum()
