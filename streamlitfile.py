@@ -1,29 +1,32 @@
-# -*- coding: utf-8 -*-
-
-
-
-#load the packages
+import re
 import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
 
-# Load the sample marketing data
-data = pd.read_csv('samplepython.csv')
+def extract_urls_from_text(text):
+    # Use regex to find URLs
+    urls = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', text)
 
-# Streamlit app title
-st.title('Marketing Data Analysis')
+    # Filter URLs to keep only those ending with "_zpid/" and remove duplicates
+    filtered_urls = list(set(url for url in urls if url.endswith("_zpid/")))
 
-# Sidebar - Dropdown to select metric (impressions or clicks)
-selected_metric = st.sidebar.selectbox('Select Metric:', ('Impressions', 'Clicks','Conversions'))
+    # Print the filtered URLs
+    if filtered_urls:
+        st.success("Filtered URLs:")
+        for url in filtered_urls:
+            st.write(url)
+        
+        # Export filtered URLs to link.txt
+        with open('link.txt', 'w') as output_file:
+            for i, url in enumerate(filtered_urls):
+                if i < len(filtered_urls) - 1:
+                    output_file.write(f'"{url}",\n')
+                else:
+                    output_file.write(f'"{url}"\n')
+        st.info("Exported filtered URLs to link.txt")
+    else:
+        st.warning("No unique URLs ending with '_zpid/' found in the text.")
 
-# Group by category and calculate the total metric value
-category_metrics = data.groupby('Category')[selected_metric].sum()
-
-# Bar chart to display the results using Matplotlib
-st.write(f'Total {selected_metric} by Category')
-
-fig, ax = plt.subplots(figsize=(10, 6))
-category_metrics.plot(kind='bar', ax=ax)
-ax.set_xlabel('Category')
-ax.set_ylabel(selected_metric)
-st.pyplot(fig)
+# Streamlit UI
+st.title("URL Extractor from Text")
+text_input = st.text_area("Enter the text:", "Paste your text here...")
+if st.button("Extract URLs"):
+    extract_urls_from_text(text_input)
