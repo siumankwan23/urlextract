@@ -14,6 +14,16 @@ def extract_urls_from_text(text):
         for url in filtered_urls:
             st.write(url)
         
+        # New output: URLs wrapped in double quotes, followed by a comma
+        st.success("Filtered URLs (new format with comma):")
+        new_output = ',\n'.join(f'"{url}"' for url in filtered_urls) + ','
+        st.text_area("Formatted URLs", new_output, height=200)
+
+        # Export the new formatted URLs to another file, e.g., link_comma.txt
+        with open('link_comma.txt', 'w') as output_file:
+            output_file.write(new_output)
+        st.info("Exported filtered URLs to link_comma.txt (new format with comma)")
+
         # Export filtered URLs to link.txt
         with open('link.txt', 'w') as output_file:
             for i, url in enumerate(filtered_urls):
